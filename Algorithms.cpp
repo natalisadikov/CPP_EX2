@@ -2,6 +2,13 @@
 //natalisadikov2318@gmail.com
 
 #include "Algorithms.hpp"
+#include <queue>
+#include <limits>
+#include <algorithm>
+#include <sstream>
+#include <vector>
+#include <utility>
+#include <functional>
 
 namespace ariel {
 
@@ -48,39 +55,50 @@ namespace ariel {
             throw std::out_of_range("Invalid start or end vertex");
         }
 
-        std::vector<int> dist(numVertices, INT_MAX);
+        std::vector<int> dist(numVertices, std::numeric_limits<int>::max());
         std::vector<int> prev(numVertices, -1);
+        std::vector<bool> visited(numVertices, false);
 
-        //  BFS 
-        std::queue<size_t> q;
+        // Priority queue to store vertices that are being preprocessed
+        std::priority_queue<std::pair<int, size_t>, std::vector<std::pair<int, size_t>>, std::greater<std::pair<int, size_t>>> pq;
+
         dist[start] = 0;
-        q.push(start);
+        pq.push({0, start});
 
-        while (!q.empty()) {
-            size_t v = q.front();
-            q.pop();
+        while (!pq.empty()) {
+            size_t u = pq.top().second;
+            pq.pop();
 
-            for (size_t i = 0; i < numVertices; ++i) {
-                if (g.getAdjMatrix()[v][i] > 0 && dist[i] == INT_MAX) {
-                    dist[i] = dist[v] + 1;
-                    prev[i] = v;
-                    q.push(i);
+            if (visited[u]) continue;
+            visited[u] = true;
+
+            if (u == end) break;  // Found the shortest path to the end vertex
+
+            for (size_t v = 0; v < numVertices; ++v) {
+                int weight = g.getAdjMatrix()[u][v];
+                if (weight > 0 && !visited[v]) {
+                    int newDist = dist[u] + weight;
+                    if (newDist < dist[v]) {
+                        dist[v] = newDist;
+                        prev[v] = static_cast<int>(u);
+                        pq.push({newDist, v});
+                    }
                 }
             }
         }
 
-        if (dist[end] == INT_MAX) {
-            return "-1"; 
+        if (dist[end] == std::numeric_limits<int>::max()) {
+            return "-1";  // No path exists
         }
 
-        
+        // Reconstruct the path
         std::vector<int> path;
-        for (int at = end; at != -1; at = prev[static_cast<size_t>(at)]) {
+        for (int at = static_cast<int>(end); at != -1; at = prev[static_cast<size_t>(at)]) {
             path.push_back(at);
         }
         std::reverse(path.begin(), path.end());
 
-        // path to string
+        // Format the path as a string
         std::ostringstream oss;
         for (size_t i = 0; i < path.size(); ++i) {
             oss << path[i];
