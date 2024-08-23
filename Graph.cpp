@@ -71,6 +71,20 @@ namespace ariel {
     }
 
     Graph Graph::operator+(const Graph& other) const {
+        size_t numVertices = adjMatrix.size(); // Number of vertices should be the size of adjMatrix
+
+        // Check if the number of rows equals the number of vertices
+        if (numVertices != adjMatrix.size()) {
+            throw std::invalid_argument("The adjacency matrix is not square: rows != vertices.");
+        }
+
+        // Check if each row has the same number of columns (which should also equal numVertices)
+        for (const auto& row : adjMatrix) {
+            if (row.size() != numVertices) {
+                throw std::invalid_argument("The adjacency matrix is not square: row size != vertices.");
+            }
+        }
+        
         if (numVertices != other.numVertices) {
             throw std::invalid_argument("Graphs must have the same number of vertices");
         }
@@ -93,9 +107,20 @@ namespace ariel {
     }
 
     Graph Graph::operator-(const Graph& other) const {
-        if (numVertices != other.numVertices) {
-            throw std::invalid_argument("Graphs must have the same number of vertices");
+        size_t numVertices = adjMatrix.size(); // Number of vertices should be the size of adjMatrix
+
+        // Check if the number of rows equals the number of vertices
+        if (numVertices != adjMatrix.size()) {
+            throw std::invalid_argument("The adjacency matrix is not square: rows != vertices.");
         }
+
+        // Check if each row has the same number of columns (which should also equal numVertices)
+        for (const auto& row : adjMatrix) {
+            if (row.size() != numVertices) {
+                throw std::invalid_argument("The adjacency matrix is not square: row size != vertices.");
+            }
+        }
+
         Graph result(numVertices);
         for (size_t i = 0; i < numVertices; ++i) {
             for (size_t j = 0; j < numVertices; ++j) {
@@ -111,6 +136,20 @@ namespace ariel {
     }
 
     Graph Graph::operator-() const {
+        size_t numVertices = adjMatrix.size(); // Number of vertices should be the size of adjMatrix
+
+        // Check if the number of rows equals the number of vertices
+        if (numVertices != adjMatrix.size()) {
+            throw std::invalid_argument("The adjacency matrix is not square: rows != vertices.");
+        }
+
+        // Check if each row has the same number of columns (which should also equal numVertices)
+        for (const auto& row : adjMatrix) {
+            if (row.size() != numVertices) {
+                throw std::invalid_argument("The adjacency matrix is not square: row size != vertices.");
+            }
+        }
+        
         Graph result(numVertices);
         for (size_t i = 0; i < numVertices; ++i) {
             for (size_t j = 0; j < numVertices; ++j) {
